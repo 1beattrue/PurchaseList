@@ -15,40 +15,23 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private lateinit var viewModel: MainViewModel
-    private lateinit var llShopListView: LinearLayout
+
+    private lateinit var adapter: ShopListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        llShopListView = binding.llShopList
-
+        setupRecyclerView()
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.shopList.observe(this) {
-            showList(it)
+            adapter.shopList = it
         }
     }
 
-    private fun showList(list: List<ShopItem>) {
-        llShopListView.removeAllViews()
-        for (shopItem in list) {
-            val layoutId =
-                if (shopItem.enabled) R.layout.item_shop_enabled else R.layout.item_shop_disabled
-            val view = LayoutInflater.from(this).inflate(layoutId, llShopListView, false)
-
-            val tvName = view.findViewById<TextView>(R.id.tv_name)
-            val tvCount = view.findViewById<TextView>(R.id.tv_count)
-
-            tvName.text = shopItem.name
-            tvCount.text = shopItem.count.toString()
-
-            view.setOnLongClickListener {
-                viewModel.editShopItem(shopItem)
-                true
-            }
-
-            llShopListView.addView(view)
-        }
+    private fun setupRecyclerView() {
+        val rvShopList = binding.rvShopList
+        adapter = ShopListAdapter()
+        rvShopList.adapter = adapter
     }
 }
