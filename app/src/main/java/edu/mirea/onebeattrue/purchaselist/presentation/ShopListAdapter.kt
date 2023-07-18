@@ -1,13 +1,16 @@
 package edu.mirea.onebeattrue.purchaselist.presentation
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import edu.mirea.onebeattrue.purchaselist.R
 import edu.mirea.onebeattrue.purchaselist.domain.ShopItem
+import java.lang.RuntimeException
 
 class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>() {
     class ShopItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
@@ -23,21 +26,42 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopItemViewHolder {
+        val layout = when (viewType) {
+            VIEW_TYPE_ENABLED -> R.layout.item_shop_enabled
+            VIEW_TYPE_DISABLED -> R.layout.item_shop_disabled
+            else -> throw RuntimeException("Unknown view type $viewType")
+        }
         val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_shop_enabled, parent, false)
+            LayoutInflater.from(parent.context).inflate(layout, parent, false)
         return ShopItemViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ShopItemViewHolder, position: Int) {
         val shopItem = shopList[position]
-        holder.tvName.text = shopItem.name
-        holder.tvCount.text = shopItem.count.toString()
         holder.view.setOnLongClickListener {
             true
         }
+        holder.tvName.text = shopItem.name
+        holder.tvCount.text = shopItem.count.toString()
+    }
+
+    override fun onViewRecycled(holder: ShopItemViewHolder) { // вызывается, когда holder хотят переиспользовать
+        super.onViewRecycled(holder)
+        holder.tvName.text = ""
+        holder.tvCount.text = ""
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        val item = shopList[position]
+        return if (item.enabled) VIEW_TYPE_ENABLED else VIEW_TYPE_DISABLED
     }
 
     override fun getItemCount(): Int {
         return shopList.size
+    }
+
+    companion object {
+        const val VIEW_TYPE_ENABLED = 42
+        const val VIEW_TYPE_DISABLED = 228
     }
 }
