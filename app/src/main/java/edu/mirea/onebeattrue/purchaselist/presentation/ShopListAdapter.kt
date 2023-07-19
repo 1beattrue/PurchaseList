@@ -1,12 +1,10 @@
 package edu.mirea.onebeattrue.purchaselist.presentation
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import edu.mirea.onebeattrue.purchaselist.R
 import edu.mirea.onebeattrue.purchaselist.domain.ShopItem
@@ -19,11 +17,13 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
     }
 
     var shopList = listOf<ShopItem>()
-        @SuppressLint("NotifyDataSetChanged")
-        set(value) {
+        @SuppressLint("NotifyDataSetChanged") set(value) {
             field = value
             notifyDataSetChanged()
         }
+
+    var onShopItemLongClickListener: ((ShopItem) -> Unit)? = null
+    var onShopItemClickListener: ((ShopItem) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopItemViewHolder {
         val layout = when (viewType) {
@@ -31,16 +31,20 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
             VIEW_TYPE_DISABLED -> R.layout.item_shop_disabled
             else -> throw RuntimeException("Unknown view type $viewType")
         }
-        val view =
-            LayoutInflater.from(parent.context).inflate(layout, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(layout, parent, false)
         return ShopItemViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ShopItemViewHolder, position: Int) {
         val shopItem = shopList[position]
         holder.view.setOnLongClickListener {
+            onShopItemLongClickListener?.invoke(shopItem) // аналог onShopItemLongClickListener(shopItem), но учитывая null
             true
         }
+        holder.view.setOnClickListener {
+            onShopItemClickListener?.invoke(shopItem)
+        }
+
         holder.tvName.text = shopItem.name
         holder.tvCount.text = shopItem.count.toString()
     }
@@ -60,8 +64,14 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
         return shopList.size
     }
 
+    interface OnShopItemLongClickListener {
+        fun onShopItemLongClick(shopItem: ShopItem)
+    }
+
     companion object {
         const val VIEW_TYPE_ENABLED = 42
         const val VIEW_TYPE_DISABLED = 228
+
+        const val MAX_POOL_SIZE = 15
     }
 }
