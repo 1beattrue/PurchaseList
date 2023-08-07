@@ -1,6 +1,5 @@
 package edu.mirea.onebeattrue.purchaselist.presentation
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import edu.mirea.onebeattrue.purchaselist.data.ShopListRepositoryImpl
 import edu.mirea.onebeattrue.purchaselist.domain.DeleteShopItemUseCase
@@ -23,7 +22,7 @@ class MainViewModel : ViewModel() {
         deleteShopItemUseCase.deleteShopItem(shopItem)
     }
 
-    fun editShopItem(shopItem: ShopItem) {
+    fun changeEnableState(shopItem: ShopItem) {
         val newItem = shopItem.copy(enabled = !shopItem.enabled)
         editShopItemUseCase.editShopItem(newItem)
     }
