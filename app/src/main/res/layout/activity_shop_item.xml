@@ -18,6 +18,7 @@
         app:layout_constraintBottom_toTopOf="@id/til_count"
         app:layout_constraintVertical_chainStyle="packed">
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/tiet_name"
@@ -36,6 +37,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/btn_save">
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etCount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/tiet_count"

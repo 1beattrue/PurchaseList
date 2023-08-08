@@ -22,7 +22,7 @@ class ShopItemViewModel : ViewModel() {
 
     private val _errorInputCount = MutableLiveData<Boolean>()
     val errorInputCount: LiveData<Boolean>
-        get() = _errorInputName
+        get() = _errorInputCount
 
     private val _shopItem = MutableLiveData<ShopItem>()
     val shopItem: LiveData<ShopItem>
@@ -38,7 +38,6 @@ class ShopItemViewModel : ViewModel() {
         val fieldsValid = validateInput(name, count)
 
         if (fieldsValid) {
-            val shopItem = ShopItem(name, count, enabled = true)
             addShopItemUseCase.addShopItem(ShopItem(name, count, true))
             finishWork()
         }
@@ -76,15 +75,16 @@ class ShopItemViewModel : ViewModel() {
     }
 
     private fun validateInput(name: String, count: Int): Boolean {
+        var result = true
         if (name.isBlank()) {
             _errorInputName.value = true
-            return false
+            result = false
         }
         if (count <= 0) {
             _errorInputCount.value = true
-            return false
+            result = false
         }
-        return true
+        return result
     }
 
     fun resetErrorInputName() {
