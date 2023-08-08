@@ -3,4 +3,7 @@
     <string name="add_new_shop_item">Add new shop item</string>
     <string name="item_name">Товар</string>
     <string name="item_count">1</string>
+    <string name="tiet_name">Name:</string>
+    <string name="btn_save">Save</string>
+    <string name="tiet_count">Count:</string>
 </resources>
