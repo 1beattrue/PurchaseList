@@ -3,27 +3,14 @@ package edu.mirea.onebeattrue.purchaselist.presentation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
-import android.widget.Button
-import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.textfield.TextInputLayout
 import edu.mirea.onebeattrue.purchaselist.R
 import edu.mirea.onebeattrue.purchaselist.databinding.ActivityShopItemBinding
 import edu.mirea.onebeattrue.purchaselist.domain.ShopItem
 
-class ShopItemActivity : AppCompatActivity() {
+class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
     private lateinit var binding: ActivityShopItemBinding
-    private lateinit var viewModel: ShopItemViewModel
-
-    private lateinit var tilName: TextInputLayout
-    private lateinit var tilCount: TextInputLayout
-    private lateinit var etName: EditText
-    private lateinit var etCount: EditText
-    private lateinit var btnSave: Button
 
     private var screenMode = MODE_UNKNOWN
     private var shopItemId = ShopItem.UNDEFINED_ID
@@ -34,94 +21,24 @@ class ShopItemActivity : AppCompatActivity() {
 
         parseIntent()
 
-        viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
-
-        initViews()
-        addTextChangedListeners()
-        launchRightMode()
-        observeViewModel()
+        if (savedInstanceState == null)
+            launchRightMode()
     }
 
-    private fun observeViewModel() {
-        viewModel.errorInputName.observe(this) {
-            val message = if (it) {
-                getString(R.string.error_input_name)
-            } else {
-                null
-            }
-            tilName.error = message
-        }
-
-        viewModel.errorInputCount.observe(this) {
-            val message = if (it) {
-                getString(R.string.error_input_count)
-            } else {
-                null
-            }
-            tilCount.error = message
-        }
-
-        viewModel.shouldCloseScreen.observe(this) {
-            finish()
-        }
-    }
-
-    private fun addTextChangedListeners() {
-        etName.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                viewModel.resetErrorInputName()
-            }
-
-            override fun afterTextChanged(p0: Editable?) {
-            }
-        })
-
-        etCount.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                viewModel.resetErrorInputCount()
-            }
-
-            override fun afterTextChanged(p0: Editable?) {
-            }
-        })
-    }
-
-    private fun initViews() {
-        tilName = binding.tilName
-        tilCount = binding.tilCount
-        etName = binding.etName
-        etCount = binding.etCount
-        btnSave = binding.btnSave
+    override fun onEditingFinished() {
+        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
+        finish()
     }
 
     private fun launchRightMode() {
-        when (screenMode) {
-            MODE_ADD -> launchAddMode()
-            MODE_EDIT -> launchEditMode()
+        val fragment = when (screenMode) {
+            MODE_ADD -> ShopItemFragment.newInstanceAddItem()
+            MODE_EDIT -> ShopItemFragment.newInstanceEditItem(shopItemId)
+            else -> throw RuntimeException("Unknown screen mode: $screenMode")
         }
-    }
-
-    private fun launchAddMode() {
-        btnSave.setOnClickListener {
-            viewModel.addShopItem(etName.text?.toString(), etCount.text?.toString())
-        }
-    }
-
-    private fun launchEditMode() {
-        viewModel.getShopItem(shopItemId)
-        viewModel.shopItem.observe(this) {
-            etName.setText(it.name)
-            etCount.setText(it.count.toString())
-        }
-        btnSave.setOnClickListener {
-            viewModel.editShopItem(etName.text?.toString(), etCount.text?.toString())
-        }
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.shop_item_container, fragment) // добавляем фрагмент в контейнер
+            .commit()                                // запускаем транзакцию
     }
 
     private fun parseIntent() {
