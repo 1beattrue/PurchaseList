@@ -10,7 +10,6 @@ import edu.mirea.onebeattrue.purchaselist.domain.ShopItem
 
 class ShopItemActivity : AppCompatActivity() {
     private lateinit var binding: ActivityShopItemBinding
-    private lateinit var viewModel: ShopItemViewModel
 
     private var screenMode = MODE_UNKNOWN
     private var shopItemId = ShopItem.UNDEFINED_ID
