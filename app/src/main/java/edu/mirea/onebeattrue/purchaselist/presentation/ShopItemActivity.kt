@@ -8,7 +8,7 @@ import edu.mirea.onebeattrue.purchaselist.R
 import edu.mirea.onebeattrue.purchaselist.databinding.ActivityShopItemBinding
 import edu.mirea.onebeattrue.purchaselist.domain.ShopItem
 
-class ShopItemActivity : AppCompatActivity() {
+class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
     private lateinit var binding: ActivityShopItemBinding
 
     private var screenMode = MODE_UNKNOWN
@@ -22,6 +22,10 @@ class ShopItemActivity : AppCompatActivity() {
 
         if (savedInstanceState == null)
             launchRightMode()
+    }
+
+    override fun onEditingFinished() {
+        finish()
     }
 
     private fun launchRightMode() {

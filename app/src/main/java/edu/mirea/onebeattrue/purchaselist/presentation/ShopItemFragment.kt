@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.purchaselist.presentation
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -25,6 +26,16 @@ class ShopItemFragment : Fragment() {
 
     private var screenMode = MODE_UNKNOWN
     private var shopItemId = ShopItem.UNDEFINED_ID
+
+    private lateinit var onEditingFinishedListener: OnEditingFinishedListener
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnEditingFinishedListener)
+            onEditingFinishedListener = context
+        else
+            throw RuntimeException("Activity must implement OnEditingFinishedListener")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,7 +84,7 @@ class ShopItemFragment : Fragment() {
         }
 
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-            activity?.onBackPressed() // аналогичный метод requireActivity() не может быть null (не совсем безопасно)
+            onEditingFinishedListener.onEditingFinished()
         }
     }
 
@@ -153,6 +164,10 @@ class ShopItemFragment : Fragment() {
         }
     }
 
+    interface OnEditingFinishedListener {
+        fun onEditingFinished()
+    }
+
     companion object {
         private const val SCREEN_MODE = "mode_extra"
         private const val SHOP_ITEM_ID = "extra_shop_item_id"
@@ -161,7 +176,7 @@ class ShopItemFragment : Fragment() {
 
         private const val MODE_UNKNOWN = ""
 
-        fun newInstanceAddItem(): Fragment {
+        fun newInstanceAddItem(): ShopItemFragment {
             return ShopItemFragment().apply {
                 arguments = Bundle().apply {
                     putString(SCREEN_MODE, MODE_ADD)
@@ -169,7 +184,7 @@ class ShopItemFragment : Fragment() {
             }
         }
 
-        fun newInstanceEditItem(shopItemId: Int): Fragment {
+        fun newInstanceEditItem(shopItemId: Int): ShopItemFragment {
             return ShopItemFragment().apply {// вызываем методы у экземпляра
                 arguments = Bundle().apply {
                     putString(SCREEN_MODE, MODE_EDIT)
