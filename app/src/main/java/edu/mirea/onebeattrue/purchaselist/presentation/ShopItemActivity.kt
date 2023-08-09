@@ -20,7 +20,8 @@ class ShopItemActivity : AppCompatActivity() {
 
         parseIntent()
 
-        launchRightMode()
+        if (savedInstanceState == null)
+            launchRightMode()
     }
 
     private fun launchRightMode() {
@@ -30,7 +31,7 @@ class ShopItemActivity : AppCompatActivity() {
             else -> throw RuntimeException("Unknown screen mode: $screenMode")
         }
         supportFragmentManager.beginTransaction()
-            .add(R.id.shop_item_container, fragment) // добавляем фрагмент в контейнер
+            .replace(R.id.shop_item_container, fragment) // добавляем фрагмент в контейнер
             .commit()                                // запускаем транзакцию
     }
 
