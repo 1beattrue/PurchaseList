@@ -17,15 +17,12 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     private lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
 
-    private var shopItemContainer: FragmentContainerView? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupFragment()
         setupRecyclerView()
 
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
@@ -50,11 +47,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     }
 
     private fun isOnePaneMode(): Boolean {
-        return shopItemContainer == null
-    }
-
-    private fun setupFragment() {
-        shopItemContainer = binding.shopItemContainer // он есть только в альбомной вариации, если мы в портретной - вернется null
+        return binding.shopItemContainer == null
     }
 
     private fun launchFragment(fragment: Fragment) {
