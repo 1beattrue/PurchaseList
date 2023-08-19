@@ -9,6 +9,10 @@ import edu.mirea.onebeattrue.purchaselist.domain.AddShopItemUseCase
 import edu.mirea.onebeattrue.purchaselist.domain.EditShopItemUseCase
 import edu.mirea.onebeattrue.purchaselist.domain.GetShopItemUseCase
 import edu.mirea.onebeattrue.purchaselist.domain.ShopItem
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 class ShopItemViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = ShopListRepositoryImpl(application)
@@ -16,6 +20,8 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
     private val addShopItemUseCase = AddShopItemUseCase(repository)
     private val editShopItemUseCase = EditShopItemUseCase(repository)
     private val getShopItemUseCase = GetShopItemUseCase(repository)
+
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     private val _errorInputName = MutableLiveData<Boolean>()
     val errorInputName: LiveData<Boolean>
@@ -39,8 +45,10 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
         val fieldsValid = validateInput(name, count)
 
         if (fieldsValid) {
-            addShopItemUseCase.addShopItem(ShopItem(name, count, true))
-            finishWork()
+            scope.launch {
+                addShopItemUseCase.addShopItem(ShopItem(name, count, true))
+                finishWork()
+            }
         }
     }
 
@@ -51,16 +59,20 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
 
         if (fieldsValid) {
             _shopItem.value?.let {
-                val item = it.copy(name = name, count = count)
-                editShopItemUseCase.editShopItem(item)
-                finishWork()
+                scope.launch {
+                    val item = it.copy(name = name, count = count)
+                    editShopItemUseCase.editShopItem(item)
+                    finishWork()
+                }
             }
         }
     }
 
     fun getShopItem(shopItemId: Int) {
-        val item = getShopItemUseCase.getShopItem(shopItemId)
-        _shopItem.value = item
+        scope.launch {
+            val item = getShopItemUseCase.getShopItem(shopItemId)
+            _shopItem.value = item
+        }
     }
 
     private fun parseName(inputName: String?): String {
@@ -98,5 +110,10 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
 
     private fun finishWork() {
         _shouldCloseScreen.value = Unit // нам неважно какой элемент прилетит, главное, что прилетит
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        scope.cancel()
     }
 }

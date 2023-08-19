@@ -27,9 +27,7 @@ abstract class AppDatabase: RoomDatabase() {
                     application,
                     AppDatabase::class.java,
                     DB_NAME
-                )
-                    .allowMainThreadQueries() // TODO: для теста мы допускаем изменение бд в главном потоке, потом надо убрать
-                    .build()
+                ).build()
                 INSTANCE = db
                 return db
             }
