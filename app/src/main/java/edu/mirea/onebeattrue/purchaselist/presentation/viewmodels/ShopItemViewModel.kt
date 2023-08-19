@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import edu.mirea.onebeattrue.purchaselist.data.ShopListRepositoryImpl
 import edu.mirea.onebeattrue.purchaselist.domain.AddShopItemUseCase
 import edu.mirea.onebeattrue.purchaselist.domain.EditShopItemUseCase
@@ -20,8 +21,6 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
     private val addShopItemUseCase = AddShopItemUseCase(repository)
     private val editShopItemUseCase = EditShopItemUseCase(repository)
     private val getShopItemUseCase = GetShopItemUseCase(repository)
-
-    private val scope = CoroutineScope(Dispatchers.IO)
 
     private val _errorInputName = MutableLiveData<Boolean>()
     val errorInputName: LiveData<Boolean>
@@ -45,7 +44,7 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
         val fieldsValid = validateInput(name, count)
 
         if (fieldsValid) {
-            scope.launch {
+            viewModelScope.launch {
                 addShopItemUseCase.addShopItem(ShopItem(name, count, true))
                 finishWork()
             }
@@ -59,7 +58,7 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
 
         if (fieldsValid) {
             _shopItem.value?.let {
-                scope.launch {
+                viewModelScope.launch {
                     val item = it.copy(name = name, count = count)
                     editShopItemUseCase.editShopItem(item)
                     finishWork()
@@ -69,7 +68,7 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun getShopItem(shopItemId: Int) {
-        scope.launch {
+        viewModelScope.launch {
             val item = getShopItemUseCase.getShopItem(shopItemId)
             _shopItem.value = item
         }
@@ -110,10 +109,5 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
 
     private fun finishWork() {
         _shouldCloseScreen.value = Unit // нам неважно какой элемент прилетит, главное, что прилетит
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        scope.cancel()
     }
 }
