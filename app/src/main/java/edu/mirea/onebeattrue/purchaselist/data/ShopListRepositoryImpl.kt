@@ -3,11 +3,8 @@ package edu.mirea.onebeattrue.purchaselist.data
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import edu.mirea.onebeattrue.purchaselist.domain.ShopItem
 import edu.mirea.onebeattrue.purchaselist.domain.ShopListRepository
-import java.lang.RuntimeException
-import kotlin.random.Random
 
 class ShopListRepositoryImpl(
     application: Application

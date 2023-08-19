@@ -1,5 +1,7 @@
-package edu.mirea.onebeattrue.purchaselist.presentation
+package edu.mirea.onebeattrue.purchaselist.presentation.viewmodels
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import edu.mirea.onebeattrue.purchaselist.data.ShopListRepositoryImpl
 import edu.mirea.onebeattrue.purchaselist.domain.DeleteShopItemUseCase
@@ -7,10 +9,10 @@ import edu.mirea.onebeattrue.purchaselist.domain.EditShopItemUseCase
 import edu.mirea.onebeattrue.purchaselist.domain.GetShopListUseCase
 import edu.mirea.onebeattrue.purchaselist.domain.ShopItem
 
-class MainViewModel : ViewModel() {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository =
-        ShopListRepositoryImpl // неправильно создавать репозиторий здесь, ну тут уж извините, куда деваться
+        ShopListRepositoryImpl(application) // неправильно создавать репозиторий здесь, ну тут уж извините, куда деваться
 
     private val getShopListUseCase = GetShopListUseCase(repository)
     private val deleteShopItemUseCase = DeleteShopItemUseCase(repository)

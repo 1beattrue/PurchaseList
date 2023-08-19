@@ -13,7 +13,7 @@
         android:theme="@style/Theme.PurchaseList"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.MainActivity"
+            android:name=".presentation.views.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.ShopItemActivity"
+            android:name=".presentation.views.ShopItemActivity"
             android:windowSoftInputMode="adjustResize" />
     </application>
 

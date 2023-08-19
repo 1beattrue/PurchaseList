@@ -1,16 +1,17 @@
-package edu.mirea.onebeattrue.purchaselist.presentation
+package edu.mirea.onebeattrue.purchaselist.presentation.viewmodels
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import edu.mirea.onebeattrue.purchaselist.data.ShopListRepositoryImpl
 import edu.mirea.onebeattrue.purchaselist.domain.AddShopItemUseCase
 import edu.mirea.onebeattrue.purchaselist.domain.EditShopItemUseCase
 import edu.mirea.onebeattrue.purchaselist.domain.GetShopItemUseCase
 import edu.mirea.onebeattrue.purchaselist.domain.ShopItem
 
-class ShopItemViewModel : ViewModel() {
-    private val repository = ShopListRepositoryImpl
+class ShopItemViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository = ShopListRepositoryImpl(application)
 
     private val addShopItemUseCase = AddShopItemUseCase(repository)
     private val editShopItemUseCase = EditShopItemUseCase(repository)
