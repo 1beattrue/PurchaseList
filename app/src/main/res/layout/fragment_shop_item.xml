@@ -4,7 +4,7 @@
     <data>
         <variable
             name="viewModel"
-            type="edu.mirea.onebeattrue.purchaselist.presentation.ShopItemViewModel" />
+            type="edu.mirea.onebeattrue.purchaselist.presentation.viewmodels.ShopItemViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"

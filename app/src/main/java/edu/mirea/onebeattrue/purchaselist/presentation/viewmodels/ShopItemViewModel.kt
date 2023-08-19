@@ -1,16 +1,22 @@
-package edu.mirea.onebeattrue.purchaselist.presentation
+package edu.mirea.onebeattrue.purchaselist.presentation.viewmodels
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import edu.mirea.onebeattrue.purchaselist.data.ShopListRepositoryImpl
 import edu.mirea.onebeattrue.purchaselist.domain.AddShopItemUseCase
 import edu.mirea.onebeattrue.purchaselist.domain.EditShopItemUseCase
 import edu.mirea.onebeattrue.purchaselist.domain.GetShopItemUseCase
 import edu.mirea.onebeattrue.purchaselist.domain.ShopItem
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
-class ShopItemViewModel : ViewModel() {
-    private val repository = ShopListRepositoryImpl
+class ShopItemViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository = ShopListRepositoryImpl(application)
 
     private val addShopItemUseCase = AddShopItemUseCase(repository)
     private val editShopItemUseCase = EditShopItemUseCase(repository)
@@ -38,8 +44,10 @@ class ShopItemViewModel : ViewModel() {
         val fieldsValid = validateInput(name, count)
 
         if (fieldsValid) {
-            addShopItemUseCase.addShopItem(ShopItem(name, count, true))
-            finishWork()
+            viewModelScope.launch {
+                addShopItemUseCase.addShopItem(ShopItem(name, count, true))
+                finishWork()
+            }
         }
     }
 
@@ -50,16 +58,20 @@ class ShopItemViewModel : ViewModel() {
 
         if (fieldsValid) {
             _shopItem.value?.let {
-                val item = it.copy(name = name, count = count)
-                editShopItemUseCase.editShopItem(item)
-                finishWork()
+                viewModelScope.launch {
+                    val item = it.copy(name = name, count = count)
+                    editShopItemUseCase.editShopItem(item)
+                    finishWork()
+                }
             }
         }
     }
 
     fun getShopItem(shopItemId: Int) {
-        val item = getShopItemUseCase.getShopItem(shopItemId)
-        _shopItem.value = item
+        viewModelScope.launch {
+            val item = getShopItemUseCase.getShopItem(shopItemId)
+            _shopItem.value = item
+        }
     }
 
     private fun parseName(inputName: String?): String {

@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.purchaselist.presentation
+package edu.mirea.onebeattrue.purchaselist.presentation.views
 
 import android.content.Context
 import android.os.Bundle
@@ -9,9 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import edu.mirea.onebeattrue.purchaselist.R
 import edu.mirea.onebeattrue.purchaselist.databinding.FragmentShopItemBinding
 import edu.mirea.onebeattrue.purchaselist.domain.ShopItem
+import edu.mirea.onebeattrue.purchaselist.presentation.viewmodels.ShopItemViewModel
 
 class ShopItemFragment : Fragment() {
     private lateinit var viewModel: ShopItemViewModel

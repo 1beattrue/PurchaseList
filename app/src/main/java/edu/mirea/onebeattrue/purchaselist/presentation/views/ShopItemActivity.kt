@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.purchaselist.presentation
+package edu.mirea.onebeattrue.purchaselist.presentation.views
 
 import android.content.Context
 import android.content.Intent
