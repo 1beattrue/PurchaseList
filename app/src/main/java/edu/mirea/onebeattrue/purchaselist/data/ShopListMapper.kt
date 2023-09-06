@@ -1,8 +1,9 @@
 package edu.mirea.onebeattrue.purchaselist.data
 
 import edu.mirea.onebeattrue.purchaselist.domain.ShopItem
+import javax.inject.Inject
 
-class ShopListMapper { // преобразователь
+class ShopListMapper @Inject constructor() { // преобразователь
     fun mapEntityToDbModel(shopItem: ShopItem) = ShopItemDbModel(
         id = shopItem.id,
         name = shopItem.name,
