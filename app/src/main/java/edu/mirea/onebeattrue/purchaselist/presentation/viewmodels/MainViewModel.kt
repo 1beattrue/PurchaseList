@@ -1,27 +1,22 @@
 package edu.mirea.onebeattrue.purchaselist.presentation.viewmodels
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import edu.mirea.onebeattrue.purchaselist.data.ShopListRepositoryImpl
 import edu.mirea.onebeattrue.purchaselist.domain.DeleteShopItemUseCase
 import edu.mirea.onebeattrue.purchaselist.domain.EditShopItemUseCase
 import edu.mirea.onebeattrue.purchaselist.domain.GetShopListUseCase
 import edu.mirea.onebeattrue.purchaselist.domain.ShopItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
+class MainViewModel @Inject constructor(
+    private val getShopListUseCase: GetShopListUseCase,
+    private val deleteShopItemUseCase: DeleteShopItemUseCase,
+    private val editShopItemUseCase: EditShopItemUseCase
+) : ViewModel() {
 
-    private val repository =
-        ShopListRepositoryImpl(application) // неправильно создавать репозиторий здесь, ну тут уж извините, куда деваться
-
-    private val getShopListUseCase = GetShopListUseCase(repository)
-    private val deleteShopItemUseCase = DeleteShopItemUseCase(repository)
-    private val editShopItemUseCase = EditShopItemUseCase(repository)
 
     private val scope = CoroutineScope(Dispatchers.Main)
     // можем себе позволить, ибо разработчики Room проследили, чтобы их методы не блокировали основной поток;

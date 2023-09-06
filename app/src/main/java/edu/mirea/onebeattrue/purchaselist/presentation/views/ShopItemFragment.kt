@@ -11,9 +11,19 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import edu.mirea.onebeattrue.purchaselist.databinding.FragmentShopItemBinding
 import edu.mirea.onebeattrue.purchaselist.domain.ShopItem
+import edu.mirea.onebeattrue.purchaselist.presentation.PurchaseListApplication
 import edu.mirea.onebeattrue.purchaselist.presentation.viewmodels.ShopItemViewModel
+import edu.mirea.onebeattrue.purchaselist.presentation.viewmodels.ViewModelFactory
+import javax.inject.Inject
 
 class ShopItemFragment : Fragment() {
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy {
+        (requireActivity().application as PurchaseListApplication).component
+    }
+
     private lateinit var viewModel: ShopItemViewModel
 
     private var _binding: FragmentShopItemBinding? = null
@@ -26,6 +36,7 @@ class ShopItemFragment : Fragment() {
     private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
     override fun onAttach(context: Context) {
+        component.inject(this)
         super.onAttach(context)
         if (context is OnEditingFinishedListener)
             onEditingFinishedListener = context
@@ -53,7 +64,7 @@ class ShopItemFragment : Fragment() {
     ) { // метод, в котором безопаснее работать с view (вызывается, когда оно точно будет создано)
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[ShopItemViewModel::class.java]
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
