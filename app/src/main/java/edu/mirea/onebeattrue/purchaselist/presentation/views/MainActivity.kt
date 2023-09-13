@@ -130,7 +130,15 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val item = shopListAdapter.currentList[viewHolder.adapterPosition]
-                viewModel.deleteShopItem(item)
+//                viewModel.deleteShopItem(item)
+
+                thread {
+                    contentResolver.delete(
+                        Uri.parse("content://edu.mirea.onebeattrue.purchaselist/shop_items"),
+                        null, // эта штука у нас и так есть в shopListDao (WHERE ...)
+                        arrayOf(item.id.toString())
+                    )
+                }
             }
         }
         val itemTouchHelper = ItemTouchHelper(callback)
