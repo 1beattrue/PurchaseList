@@ -2,11 +2,19 @@ package edu.mirea.onebeattrue.purchaselist.data
 
 import android.content.ContentProvider
 import android.content.ContentValues
+import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
 import android.util.Log
 
 class ShopListProvider : ContentProvider() {
+
+    private val uriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {
+        addURI("edu.mirea.onebeattrue.purchaselist", "shop_items", GET_SHOP_ITEMS_QUERY)
+        // addURI("edu.mirea.onebeattrue.purchaselist", "shop_items/#", GET_SHOP_ITEMS_QUERY) // ключ-число
+        // addURI("edu.mirea.onebeattrue.purchaselist", "shop_items/*", GET_SHOP_ITEMS_QUERY) // ключ-строка
+    }
+
     override fun onCreate(): Boolean {
         return true
     }
@@ -18,7 +26,13 @@ class ShopListProvider : ContentProvider() {
         selectionArgs: Array<out String>?,
         sortOrder: String?
     ): Cursor? {
-        Log.d("ShopListProvider", "$uri")
+        val code = uriMatcher.match(uri)
+        when (code) {
+            GET_SHOP_ITEMS_QUERY -> {
+
+            }
+        }
+        Log.d("ShopListProvider", "query $uri, code $code")
         return null
     }
 
@@ -41,5 +55,9 @@ class ShopListProvider : ContentProvider() {
         selectionArgs: Array<out String>?
     ): Int {
         TODO("Not yet implemented")
+    }
+
+    companion object {
+        private const val GET_SHOP_ITEMS_QUERY = 100
     }
 }
