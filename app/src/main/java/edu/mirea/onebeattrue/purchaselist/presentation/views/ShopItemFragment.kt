@@ -1,6 +1,8 @@
 package edu.mirea.onebeattrue.purchaselist.presentation.views
 
+import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,6 +17,7 @@ import edu.mirea.onebeattrue.purchaselist.presentation.PurchaseListApplication
 import edu.mirea.onebeattrue.purchaselist.presentation.viewmodels.ShopItemViewModel
 import edu.mirea.onebeattrue.purchaselist.presentation.viewmodels.ViewModelFactory
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class ShopItemFragment : Fragment() {
     @Inject
@@ -120,14 +123,30 @@ class ShopItemFragment : Fragment() {
 
     private fun launchAddMode() {
         binding.btnSave.setOnClickListener {
-            viewModel.addShopItem(binding.etName.text?.toString(), binding.etCount.text?.toString())
+            // viewModel.addShopItem(binding.etName.text?.toString(), binding.etCount.text?.toString())
+
+            thread {
+                context?.contentResolver?.insert(
+                    Uri.parse("content://edu.mirea.onebeattrue.purchaselist/shop_items"),
+                    ContentValues().apply {
+                        put("id", 0)
+                        put("name", binding.etName.text?.toString())
+                        put("count", binding.etCount.text?.toString()?.toInt())
+                        put("enabled", true)
+                    }
+                )
+            }
+
         }
     }
 
     private fun launchEditMode() {
         viewModel.getShopItem(shopItemId)
         binding.btnSave.setOnClickListener {
-            viewModel.editShopItem(binding.etName.text?.toString(), binding.etCount.text?.toString())
+            viewModel.editShopItem(
+                binding.etName.text?.toString(),
+                binding.etCount.text?.toString()
+            )
         }
     }
 
