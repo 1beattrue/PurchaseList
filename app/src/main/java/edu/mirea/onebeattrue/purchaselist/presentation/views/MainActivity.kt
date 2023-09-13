@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             }
         }
         contentResolver.query(
-            Uri.parse("content://edu.mirea.onebeattrue.purchaselist/shop_items/100"),
+            Uri.parse("content://edu.mirea.onebeattrue.purchaselist/shop_items"),
             null,
             null,
             null,
